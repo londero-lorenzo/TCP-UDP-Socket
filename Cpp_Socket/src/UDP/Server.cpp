@@ -8,8 +8,6 @@
 #include "Client.h"
 #include <Winsock2.h>
 
-#pragma comment(lib, "ws2_32.lib")
-
 namespace Socket::UDP {
 
     Server::Server() {
@@ -54,9 +52,9 @@ namespace Socket::UDP {
 
         Socket::UDP::Client client(&(Server::listenSock));
 
-        char *data = client.Receive();
+        char *data = client.receive();
 
-        client.Send(data);
+        client.send(data);
 
         client.close();
     }

@@ -8,7 +8,6 @@
 
 #include <Winsock2.h>
 #include <iostream>
-#pragma comment(lib, "ws2_32.lib")
 
 namespace Socket::TCP {
 
@@ -24,6 +23,8 @@ namespace Socket::TCP {
 
         sockaddr_in clientAddr{};
 
+        int clientAddrLen = sizeof(clientAddr);
+
         // buffer di caratteri utilizzato per essere riempito con i dati in ricezione
         char receivingBuffer[1024]{};
 
@@ -32,7 +33,7 @@ namespace Socket::TCP {
         // viene dichiarato un costruttore pubblico
         Client();
 
-        explicit Client(const SOCKET *clientSock, sockaddr_in clientAddr);
+        explicit Client(SOCKET *serverSock);
 
         // viene dichiarato un metodo void per permettere la connessione al server
         void connectTo(char *ip, int port);

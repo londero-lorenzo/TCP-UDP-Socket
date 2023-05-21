@@ -7,8 +7,8 @@
 #define CPP_SOCKET_CLIENT_H
 
 
-#define CLIENT_SIDE 0
-#define SERVER_SIDE 1
+#define CLIENT 0
+#define SERVER 1
 
 #include <Winsock2.h>
 #include <iostream>
@@ -47,10 +47,10 @@ namespace Socket::UDP {
         void connectTo(char *ip, int port);
 
         // viene dichiarato un metodo void per permettere d'inviare dati al server
-        void Send(char *data);
+        void send(char *data);
 
         // viene dichiarato un metodo void per permettere la ricezione dei dati dal server
-        char *Receive();
+        char *receive();
 
         char *getIp();
 

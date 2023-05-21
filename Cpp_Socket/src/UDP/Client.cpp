@@ -2,18 +2,17 @@
 // Created by Londero Lorenzo on ~ April 2023.
 //
 
-
+// vengono incluse le librerie utili per il funzionamneto del socket
 #include "Client.h"
 #include <Winsock2.h>
 #include <ws2ipdef.h>
 #include <WS2tcpip.h>
 
-#pragma comment(lib, "ws2_32.lib")
-
 namespace Socket::UDP {
 
-
-    // viene definito il funzionamento del costruttore pubblico
+    /**
+     * Costruttore pubblico generico, si occupa dell'inizializzazione dell'oggetto socket
+     */
     Client::Client() {
         // viene caricata la struttura contenente le informazioni per l'implementazione dei Socket in Windows
         int result = WSAStartup(MAKEWORD(2, 2), &(Client::wsaData));
@@ -32,10 +31,14 @@ namespace Socket::UDP {
             WSACleanup();
             return;
         }
-
-        Client::side = CLIENT_SIDE;
+        // viene impostato il socket dalla parte client
+        Client::side = CLIENT;
     }
 
+    /**
+     * Costruttore pubblico alternativo, utilizzato dalla parte server una volta che viene captata una ricezione
+     * @param serverSock
+     */
     Client::Client(const SOCKET *serverSock) {
         int result = WSAStartup(MAKEWORD(2, 2), &(Client::wsaData));
         // viene controllato il risultato del caricamento
@@ -44,7 +47,7 @@ namespace Socket::UDP {
             return;
         }
         Client::sock = *serverSock;
-        Client::side = SERVER_SIDE;
+        Client::side = SERVER;
     }
 
 
@@ -85,7 +88,7 @@ namespace Socket::UDP {
      * Metodo utilizzato per permettere l'invio dei dati al server.
      * @param data Insieme dei caratteri da inviare al server
      */
-    void Client::Send(char *data) {
+    void Client::send(char *data) {
         std::cout << std::endl << "> Trasmissione... <" << std::endl;
         std::cout << "Dati da inviare:" << std::endl << data << std::endl;
         // viene richiamato il metodo interno per permettere l'invio dei dati
@@ -97,8 +100,7 @@ namespace Socket::UDP {
             closesocket(Client::sock);
             WSACleanup();
             return;
-        } else
-        {
+        } else {
             std::cout << "Byte inviati: " << result << std::endl;
             std::cout << "> Fine Trasmissione <" << std::endl;
         }
@@ -108,7 +110,7 @@ namespace Socket::UDP {
      * Metodo utilizzato per ricevere la sequenza di caratteri in ricezione dal server.
      * @return La sequenza di caratteri contenuti nel buffer del client
      */
-    char *Client::Receive() {
+    char *Client::receive() {
         std::cout << std::endl << "> Ricezione... <" << std::endl;
         // viene richiamato il metodo interno per permettere la ricezione dei dati
         int result = recvfrom(Client::sock, Client::receivingBuffer, sizeof(Client::receivingBuffer), 0,
@@ -120,7 +122,7 @@ namespace Socket::UDP {
             WSACleanup();
             return nullptr;
         } else {
-            if (Client::side == SERVER_SIDE) {
+            if (Client::side == SERVER) {
                 Client::clientAddr = Client::destinationAddr;
                 std::cout << "Connessione da: " << Client::getIp() << ":" << Client::getPort() << std::endl;
             }

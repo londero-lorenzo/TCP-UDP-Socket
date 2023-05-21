@@ -22,6 +22,8 @@ namespace Socket::TCP {
         // struttura contenente varie informazioni per il funzionamento del socket
         sockaddr_in serverAddr{};
 
+        int listen() const;
+
 
 
     public:
@@ -30,6 +32,8 @@ namespace Socket::TCP {
 
         // viene dichiarato un metodo void per permettere al socket di essere raggiungibile a una data porta
         void start(int port);
+
+        int getPort() const;
 
         void close() const;
 

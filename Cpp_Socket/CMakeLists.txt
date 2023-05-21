@@ -10,10 +10,10 @@ set(CMAKE_CXX_STANDARD 20) # viene impostata la versione di c++ (version: 20)
 	I socket realizzati utilizzeranno una comunicazione TCP.
 ]]
 
-add_executable(Client_TCP src/TCP/Client.cpp src/TCP/Client.h src/TCP/Server.cpp src/TCP/Server.h src/main/TCP/client.cpp src/utils/IpResolver.cpp)
-# viene aggiunto un eseguibile traget identificato dalla stringa 'Client_TCP', il quale fa riferimento ai vari file sorgente elencati
-add_executable(Server_TCP src/TCP/Client.cpp src/TCP/Client.h src/TCP/Server.cpp src/TCP/Server.h src/main/TCP/Server.cpp src/utils/IpResolver.cpp)
-# viene aggiunto un eseguibile traget identificato dalla stringa 'Server_TCP', il quale fa riferimento ai vari file sorgente elencati
+add_executable(Client_TCP src/TCP/Client.cpp src/TCP/Client.h src/TCP/Server.cpp src/TCP/Server.h src/main/TCP/client.cpp)
+# viene aggiunto un eseguibile target identificato dalla stringa 'Client_TCP', il quale fa riferimento ai vari file sorgente elencati
+add_executable(Server_TCP src/TCP/Client.cpp src/TCP/Client.h src/TCP/Server.cpp src/TCP/Server.h src/main/TCP/server.cpp)
+# viene aggiunto un eseguibile target identificato dalla stringa 'Server_TCP', il quale fa riferimento ai vari file sorgente elencati
 
 
 set_target_properties(Client_TCP PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TCP" OUTPUT_NAME "Client")
@@ -28,10 +28,10 @@ set_target_properties(Server_TCP PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BI
 	I socket realizzati utilizzeranno una comunicazione UDP.
 ]]
 
-add_executable(Client_UDP src/UDP/Client.cpp src/UDP/Client.h src/UDP/Server.cpp src/UDP/Server.h src/main/UDP/client.cpp src/utils/IpResolver.cpp)
-# viene aggiunto un eseguibile traget identificato dalla stringa 'Client_UDP', il quale fa riferimento ai vari file sorgente elencati
-add_executable(Server_UDP src/UDP/Client.cpp src/UDP/Client.h src/UDP/Server.cpp src/UDP/Server.h src/main/UDP/Server.cpp src/utils/IpResolver.cpp)
-# viene aggiunto un eseguibile traget identificato dalla stringa 'Server_UDP', il quale fa riferimento ai vari file sorgente elencati
+add_executable(Client_UDP src/UDP/Client.cpp src/UDP/Client.h src/UDP/Server.cpp src/UDP/Server.h src/main/UDP/client.cpp)
+# viene aggiunto un eseguibile target identificato dalla stringa 'Client_UDP', il quale fa riferimento ai vari file sorgente elencati
+add_executable(Server_UDP src/UDP/Client.cpp src/UDP/Client.h src/UDP/Server.cpp src/UDP/Server.h src/main/UDP/server.cpp)
+# viene aggiunto un eseguibile target identificato dalla stringa 'Server_UDP', il quale fa riferimento ai vari file sorgente elencati
 
 set_target_properties(Client_UDP PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/UDP" OUTPUT_NAME "Client")
 # vengono modificate le proprietà dell'eseguibile target denominato 'Client_UDP' per permettere la sua creazione in uno spazio dedicato

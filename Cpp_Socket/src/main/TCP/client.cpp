@@ -2,7 +2,7 @@
 // Created by Londero Lorenzo on ~ April 2023.
 //
 
-// file header contenente le dichiarazioni del Client TCP
+// viene incluso il file header contenente le dichiarazioni del Client TCP
 #include "../../TCP/Client.h"
 
 

@@ -4,6 +4,9 @@
 
 #include <Winsock2.h>
 #include <WS2tcpip.h>
+#include <iostream>
+#include <WinDNS.h>
+#pragma comment(lib, "Dnsapi.lib")
 
 char *getMyIp() {
     char szBuffer[1024];
@@ -19,10 +22,12 @@ char *getMyIp() {
         return nullptr;
     }
 
-    struct addrinfo *res;
+    PDNS_RECORD pDnsRecord;
 
-    GetAddrInfoW((PCWSTR) (&szBuffer), nullptr, nullptr, (PADDRINFOW *) (&res));
+    DNS_STATUS status = DnsQuery(szBuffer, DNS_TYPE_A, DNS_QUERY_STANDARD, NULL, &pDnsRecord, NULL);
+
+
     char *str = (char *) malloc(sizeof(char) * INET_ADDRSTRLEN);
-    InetNtop(AF_INET, &(((struct sockaddr_in *) (res->ai_addr))->sin_addr), str, INET_ADDRSTRLEN);
+    InetNtop(AF_INET, &(((struct sockaddr_in *) (pDnsRecord))->sin_addr), str, INET_ADDRSTRLEN);
     return str;
 }

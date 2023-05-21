@@ -5,9 +5,8 @@
 
 #include "Server.h"
 #include "Client.h"
+#include "../utils/IpResolver.cpp"
 #include <Winsock2.h>
-
-#pragma comment(lib, "ws2_32.lib")
 
 namespace Socket::TCP {
 
@@ -35,11 +34,11 @@ namespace Socket::TCP {
 
     void Server::start(int port) {
         // vengono impostati i parametri per permettere la connessione
-        Server::serverAddr.sin_addr.s_addr = INADDR_ANY; // qualsiasi indirizzo ip
+        Server::serverAddr.sin_addr.s_addr = INADDR_ANY; // qualsiasi indirizzo i<p
         Server::serverAddr.sin_port = htons(port);
         Server::serverAddr.sin_family = AF_INET;
         // viene richiamato il metodo interno per permettere al socket di essere raggiunto alla data porta
-        int result = bind(listenSock, (struct sockaddr *)(&serverAddr), sizeof(serverAddr));
+        int result = bind(listenSock, (struct sockaddr *) (&serverAddr), sizeof(serverAddr));
         // viene verificato che non siano insorti errori
         if (result == SOCKET_ERROR) {
             std::cerr << "Errore durante l'apertura della porta: " << port << std::endl << WSAGetLastError()
@@ -50,31 +49,35 @@ namespace Socket::TCP {
         }
 
         // Inizia ad ascoltare le connessioni in entrata
-        result = listen(listenSock, SOMAXCONN);
-        if (result == SOCKET_ERROR) {
-            std::cerr << "Errore durante l'ascolto alla porta: " << port << std::endl << WSAGetLastError() << std::endl;
-            closesocket(listenSock);
-            WSACleanup();
-            return;
-        }
+        Server::listen();
 
-        std::cout << "In attesa di una connessione" << " alla porta: " << port << " ..." << std::endl;
-        sockaddr_in clientAddr{};
-        int clientAddrLen = sizeof(clientAddr);
-        SOCKET clientSock = accept(listenSock, (struct sockaddr *) &clientAddr, &clientAddrLen);
-
-        Socket::TCP::Client client(&clientSock, clientAddr);
-        char *clientIp = client.getIp();
+        Socket::TCP::Client client(&(Server::listenSock));
         char *data = client.receive();
-        std::cout << "Connessione da: " << clientIp << std::endl;
-        std::cout << "Data:" << std::endl << data << std::endl;
+
         client.send(data);
         client.close();
     }
 
+    int Server::listen() const {
+        //std::cout << "Server avviato all'indirizzo: " << getMyIp() << ":" << Server::getPort() << std::endl;
+        std::cout << "In attesa di una connessione ..." << std::endl;
+
+        int result = ::listen(Server::listenSock, SOMAXCONN);
+        if (result == SOCKET_ERROR) {
+            std::cerr << "Errore durante l'ascolto alla porta: " << Server::getPort() << std::endl << WSAGetLastError()
+                      << std::endl;
+            closesocket(Server::listenSock);
+            WSACleanup();
+        }
+        return result;
+    }
+
+    int Server::getPort() const {
+        return Server::serverAddr.sin_port;
+    }
+
     // definizione
-    void Server::close() const
-    {
+    void Server::close() const {
         closesocket(Server::listenSock);
     }
 }
