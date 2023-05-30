@@ -4,22 +4,33 @@
 
 // viene incluso il file header contenente le dichiarazioni del Client TCP
 #include "../../TCP/Client.h"
+#include "../../utils/Arguments.cpp"
 
 
 // viene definito il blocco principale del programma lato Client TCP
-int main() {
+int main(int argc, char *argv[]) {
+    char *ip, *stringToSend;
+    int port;
+    if (argc == 1) {
+        // viene dichiarato e definito l'indirizzo IP del server al quale ci si vuole connettere
+        ip = new char[]{
+                "192.168.178.134"
+        };
+        // viene impostata la porta alla quale connettersi
+        port = 5500;
 
-    // viene dichiarato e definito l'indirizzo IP del server al quale ci si vuole connettere
-    char *ip = new char[]{
-            "192.168.178.134"
-    };
-    // viene impostata la porta alla quale connettersi
-    int port = 5500;
+        // viene dichiarato e definito il messaggio da inviare al server
+        stringToSend = new char[]{
+                "Ciao mondo!"
+        };
+    } else
+        for (int i = 0; i < argc; i++)
+            setNetworkValuesFromArgument(&argv[i], &ip, &port, &stringToSend);
+    if (ip == nullptr || stringToSend == nullptr || port < 0)
+        printErrorWithExit(new char[]{
+                "Errore durante l'inizializzazione delle variabili per la connessione al server!"
+        });
 
-    // viene dichiarato e definito il messaggio da inviare al server
-    char *stringToSend = new char[]{
-            "Ciao mondo!"
-    };
 
     // viene creato l'oggetto client
     Socket::TCP::Client client;
