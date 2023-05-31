@@ -5,19 +5,31 @@
 #include <string>
 #include "Error.cpp"
 
+// vengono definiti degli identificatori atti a riconoscere il tipo di argomento passato all'avvio del programma
 #define UNRECOGNISED_ARG (-1)
 #define ADDRESS_ARG 0
 #define PORT_ARG 1
 #define DATA_ARG 2
 #define RAW_DATA_ARG 3
 
-
+// delimitatore standard
 char delimiter = '-';
 char addressDelimiter = 'a';
 char portDelimiter = 'p';
 char dataDelimiter = 'd';
+/*
+ * Possibili combinazioni:
+ * *.exe -a192.168.120.33 -p5505 -d"Ciao Mondo!"
+ * *.exe -a192.168.120.33 -p5505 "Ciao Mondo!"
+ * *.exe
+ *
+ */
 
-
+/**
+ * Funzione utilizzata per riconoscere la tipologia a cui fa riferimento l'argomento passato come parametro.
+ * @param arg Argomento passato all'avvio dell'applicazione
+ * @return Identificatori di riconoscimento
+ */
 int getArgumentType(const char *arg) {
     if (arg[0] != delimiter) return DATA_ARG;
     if (arg[1] == addressDelimiter) return ADDRESS_ARG;
@@ -26,15 +38,29 @@ int getArgumentType(const char *arg) {
     return UNRECOGNISED_ARG;
 }
 
-
+/**
+ * Funzione utilizzata per mantenere solamente i dati utili dall'argomento passato come parametro.
+ * @param arg Argomento passato all'avvio dell'applicazione
+ * @return Sequenza di caratteri utili relativi alla tipologia d'argomento
+ */
 char *removeDelimitersFromArgument(char *arg) {
     return (arg += 2);
 }
 
+/**
+ * Funzione utilizzata per ottenere l'indirizzo ip dall'argomento passato come parametro.
+ * @param arg Argomento passato all'avvio dell'applicazione
+ * @return Sequenza di caratteri contenente l'indirizzo ip
+ */
 char *getAddressFromArgument(char *arg) {
     return removeDelimitersFromArgument(arg);
 }
 
+/**
+ * Funzione utilizzata per ottenere la porta alla quale opera il socket dall'argomento passato come parametro.
+ * @param arg Argomento passato all'avvio dell'applicazione
+ * @return Numero riferito alla porta alla quale dovrà operare il socket
+ */
 int getPortFromArgument(char *arg) {
     int port;
     int result = sscanf_s(removeDelimitersFromArgument(arg), "%d", &port);
@@ -49,10 +75,22 @@ int getPortFromArgument(char *arg) {
 
 }
 
+/**
+ * Funzione utilizzata per ottenere i dati da trasmettere dall'argomento passato come parametro.
+ * @param arg Argomento passato all'avvio dell'applicazione
+ * @return Sequenza di caratteri contenente i dati da trasmettere
+ */
 char *getDataToSendFromArgument(char *arg) {
     return removeDelimitersFromArgument(arg);
 }
 
+/**
+ * Funzione utilizzata per inizializzare le variabili passate come argomenti tramite le informazioni fornite durante l'avvio del programma.
+ * @param arg Riferimento alla stringa contenente l'argomento passato all'avvio dell'applicazione
+ * @param ip Riferimento alla stringa nella quale verrà immagazzinato l'indirizzo ip del socket
+ * @param port Riferimento all'intero nel quale verrà immagazzinata la porta del socket
+ * @param stringToSend Riferimento alla stringa nella quale verranno immagazzinate le informazioni da trasmettere
+ */
 void setNetworkValuesFromArgument(char **arg, char **ip, int *port, char **stringToSend) {
     int argument = getArgumentType(*arg);
     if (argument == ADDRESS_ARG)
@@ -65,6 +103,14 @@ void setNetworkValuesFromArgument(char **arg, char **ip, int *port, char **strin
         *stringToSend = getDataToSendFromArgument(*arg);
 }
 
+/**
+ * Funzione utilizzata per inizializzare automaticamente le variabili utili per permettere al Client di instaurare una comunicazione tramite gli argomenti passati durante l'avvio del programma.
+ * @param argc Numero di argomenti passati all'avvio dell'applicazione
+ * @param argv Stringhe di argomenti passati all'avvio dell'applicazione
+ * @param ip Riferimento alla stringa nella quale verrà immagazzinato l'indirizzo ip del socket
+ * @param port Riferimento all'intero nel quale verrà immagazzinata la porta del socket
+ * @param stringToSend Riferimento alla stringa nella quale verranno immagazzinate le informazioni da trasmettere
+ */
 void
 initializeClientNetworkValuesFromArguments(const int *argc, char ***argv, char **ip, int *port, char **stringToSend) {
     /*
@@ -95,7 +141,12 @@ initializeClientNetworkValuesFromArguments(const int *argc, char ***argv, char *
         });
 }
 
-
+/**
+ * Funzione utilizzata per inizializzare automaticamente le variabili utili per permettere al Server di instaurare una comunicazione tramite gli argomenti passati durante l'avvio del programma.
+ * @param argc Numero di argomenti passati all'avvio dell'applicazione
+ * @param argv Stringhe di argomenti passati all'avvio dell'applicazione
+ * @param port Riferimento all'intero nel quale verrà immagazzinata la porta del socket
+ */
 void initializeServerNetworkValuesFromArguments(const int *argc, char ***argv, int *port) {
     /*
      * ---------Inizializzazione variabili utili per il funzionamento del server---------
