@@ -8,11 +8,17 @@
 #include <ws2ipdef.h>
 #include <WS2tcpip.h>
 #include <string>
+
+// viene incluso il file cpp utilizzato per mostrare a schermo gli errori insorti durante l'esecuzione del programma
 #include "../utils/Error.cpp"
 
+// viene aggiunta la libreria "ws2_32.lib" alla lista delle librerie utili per il funzionamento del socket
 #pragma comment(lib, "ws2_32.lib")
 
-// viene definito lo spazio logico nel quale si troverà l'oggetto al suo interno
+// viene definito lo spazio logico nel quale si troverà l'oggetto di seguito definito
+/**
+ * Spazio logico nel quale sono racchiusi tutti gli oggetti Socket
+ */
 namespace Socket::TCP {
 
     /**
@@ -43,7 +49,7 @@ namespace Socket::TCP {
 
     /**
      * Costruttore pubblico alternativo, utilizzato dalla parte server una volta che viene captato un tentativo di connessione.
-     * @param serverSock
+     * @param serverSock Struttura alla quale fa riferimento il socket lato server
      */
     Client::Client(const SOCKET *serverSock) {
         int result = WSAStartup(MAKEWORD(2, 2), &(Client::wsaData));
@@ -54,7 +60,6 @@ namespace Socket::TCP {
             }, result);
             return;
         }
-
         SOCKET clientSock = accept(*serverSock, (struct sockaddr *) &(Client::clientAddr),
                                    &(Client::clientAddrLen));
         if (clientSock == INVALID_SOCKET) {
@@ -63,8 +68,6 @@ namespace Socket::TCP {
             });
             return;
         }
-
-
         std::cout << "Connessione da: " << Client::getIp() << std::endl;
         Client::sock = clientSock;
     }
@@ -120,8 +123,8 @@ namespace Socket::TCP {
             });
             closesocket(Client::sock);
             return;
-        } else
-            std::cout << "Byte inviati: " << result << std::endl;
+        }
+        std::cout << "Byte inviati: " << result << std::endl;
         std::cout << "> Fine Trasmissione <" << std::endl;
     }
 

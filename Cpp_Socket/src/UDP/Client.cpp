@@ -2,12 +2,23 @@
 // Created by Londero Lorenzo on ~ April 2023.
 //
 
-// vengono incluse le librerie utili per il funzionamneto del socket
+// vengono incluse le librerie utili per il funzionamento del socket
 #include "Client.h"
 #include <Winsock2.h>
 #include <ws2ipdef.h>
 #include <WS2tcpip.h>
+#include <string>
 
+// viene incluso il file cpp utilizzato per mostrare a schermo gli errori insorti durante l'esecuzione del programma
+#include "../utils/Error.cpp"
+
+// viene aggiunta la libreria "ws2_32.lib" alla lista delle librerie utili per il funzionamento del socket
+#pragma comment(lib, "ws2_32.lib")
+
+// viene definito lo spazio logico nel quale si troverà l'oggetto di seguito definito
+/**
+ * Spazio logico nel quale sono racchiusi tutti gli oggetti Socket
+ */
 namespace Socket::UDP {
 
     /**
@@ -18,7 +29,9 @@ namespace Socket::UDP {
         int result = WSAStartup(MAKEWORD(2, 2), &(Client::wsaData));
         // viene controllato il risultato del caricamento
         if (result != 0) {
-            std::cerr << "Errore durante il caricamento di WSAStartup: " << result << std::endl;
+            printErrorBeforeWSAInit(new char[]{
+                    "Errore durante il caricamento di WSAStartup."
+            }, result);
             return;
         }
         // AF_INET = famiglia dell'indirizzo utilizzato per il socket (IPv4)
@@ -27,8 +40,9 @@ namespace Socket::UDP {
         Client::sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         // viene verificato che l'oggetto socket creato sia valido
         if (Client::sock == INVALID_SOCKET) {
-            std::cerr << "Socket invalido: " << WSAGetLastError() << std::endl;
-            WSACleanup();
+            printWSAError(new char[]{
+                    "Errore durante il caricamento del socket."
+            });
             return;
         }
         // viene impostato il socket dalla parte client
@@ -37,13 +51,15 @@ namespace Socket::UDP {
 
     /**
      * Costruttore pubblico alternativo, utilizzato dalla parte server una volta che viene captata una ricezione
-     * @param serverSock
+     * @param serverSock Struttura alla quale fa riferimento il socket lato server
      */
     Client::Client(const SOCKET *serverSock) {
         int result = WSAStartup(MAKEWORD(2, 2), &(Client::wsaData));
         // viene controllato il risultato del caricamento
         if (result != 0) {
-            std::cerr << "Errore durante il caricamento di WSAStartup: " << result << std::endl;
+            printErrorBeforeWSAInit(new char[]{
+                    "Errore durante il caricamento di WSAStartup."
+            }, result);
             return;
         }
         Client::sock = *serverSock;
@@ -74,10 +90,12 @@ namespace Socket::UDP {
                              sizeof(Client::destinationAddr));
         // viene verificato che non siano insorti errori nel momento della connessione
         if (result == SOCKET_ERROR) {
-            std::cerr << "Errore durante l'inizializzazione della connessione verso \"" << ip << "\" alla porta "
-                      << port << std::endl << WSAGetLastError() << std::endl;
+            std::string outputStringError =
+                    "\nErrore durante l'inizializzazione della connessione verso: " + std::string(ip) + ":" +
+                    std::to_string(port);
+
+            printWSAError(outputStringError.data());
             closesocket(Client::sock);
-            WSACleanup();
             return;
         }
 
@@ -96,14 +114,14 @@ namespace Socket::UDP {
                             sizeof(Client::destinationAddr));
         // viene verificato che non siano insorti errori durante l'invio dei dati
         if (result == SOCKET_ERROR) {
-            std::cerr << "Errore durante l'invio dei dati" << std::endl;
+            printWSAError(new char[]{
+                    "Errore durante l'invio dei dati."
+            });
             closesocket(Client::sock);
-            WSACleanup();
             return;
-        } else {
-            std::cout << "Byte inviati: " << result << std::endl;
-            std::cout << "> Fine Trasmissione <" << std::endl;
         }
+        std::cout << "Byte inviati: " << result << std::endl;
+        std::cout << "> Fine Trasmissione <" << std::endl;
     }
 
     /**
@@ -117,9 +135,10 @@ namespace Socket::UDP {
                               (struct sockaddr *) &(Client::destinationAddr), &(Client::destinationAddrLen));
         // viene verificato che non siano insorti errori durante la ricezione dei dati
         if (result == SOCKET_ERROR) {
-            std::cerr << "Errore durante la ricezione dei dati" << std::endl << WSAGetLastError() << std::endl;
+            printWSAError(new char[]{
+                    "Errore durante la ricezione dei dati."
+            });
             closesocket(Client::sock);
-            WSACleanup();
             return nullptr;
         } else {
             if (Client::side == SERVER) {
@@ -133,16 +152,27 @@ namespace Socket::UDP {
         return Client::receivingBuffer;
     }
 
+    /**
+     * Metodo utilizzato per ottenere l'indirizzo ip del client
+     * @return Sequenza di caratteri che identificano l'indirizzo ip del client
+     */
     char *Client::getIp() {
         char *str = (char *) malloc(sizeof(char) * INET_ADDRSTRLEN);
         InetNtop(AF_INET, &(Client::clientAddr.sin_addr), str, INET_ADDRSTRLEN);
         return str;
     }
 
+    /**
+     * Metodo utilizzato per ottenere la porta alla quale il client si è connesso
+     * @return Numero di porta alla quale il client si è connesso
+     */
     int Client::getPort() const {
         return Client::clientAddr.sin_port;
     }
 
+    /**
+     * Metodo utilizzato per chiudere il socket.
+     */
     void Client::close() const {
         closesocket(Client::sock);
     }
