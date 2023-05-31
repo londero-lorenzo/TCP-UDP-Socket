@@ -68,10 +68,10 @@ namespace Socket::UDP {
         char *receive();
 
         // viene dichiarato il metodo per ottenere l'indirizzo ip di questo socket
-        char *getIp();
+        [[nodiscard]] char *getIp();
 
         // viene dichiarato il metodo per ottenere la porta di questo socket
-        int getPort() const;
+        [[nodiscard]] int getPort() const;
 
         // viene dichiarato il metodo per chiudere il socket
         void close() const;
