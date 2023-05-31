@@ -23,7 +23,7 @@ static void printErrorWithExit(char *description)
 }
 
 /**
- * Metodo utilizzato per stampare a schermo gli eventuali errori generati durante l'esecuzione del programma.
+ * Funzione utilizzata per stampare a schermo gli eventuali errori generati durante l'esecuzione del programma.
  * @param description Descrizione dell'errore
  */
 static void printWSAError(char *description) {
@@ -33,7 +33,7 @@ static void printWSAError(char *description) {
 }
 
 /**
- * Metodo alternativo utilizzato per stampare a schermo gli eventuali errori generati durante l'esecuzione del programma prima del caricamento di WSAStartup.
+ * Funzione alternativa utilizzata per stampare a schermo gli eventuali errori generati durante l'esecuzione del programma prima del caricamento di WSAStartup.
  * @param description Descrizione dell'errore
  * @param exitCode Codice d'uscita nel momento del caricamento di WSAStartup
  */
