@@ -16,25 +16,8 @@
 int main(int argc, char *argv[]) {
     int port = -1;
 
-    /*
-     * ---------Inizializzazione variabili utili per il funzionamento del server---------
-     */
-    // viene controllato il numero di argomenti passati al programma
-    if (argc == 1) {
-        // (la prima posizione di argv contiene il nome del programma, quindi è scartabile)
-        // viene utilizzata la porta di default
-        port = 5500;
-    } else {
-        // viene controllato che l'argomento passato corrisponda alla porta a cui aprire il server
-        int argument = getArgumentType(argv[1]);
-        if (argument == PORT_ARG || argument == DATA_ARG)
-            port = getPortFromArgument(argv[1]);
-    }
-    // se la porta non è stata inizializzata, viene rilasciato un messaggio d'errore
-    if (port < 0)
-        printErrorWithExit(new char[]{
-                "Errore durante l'inizializzazione delle variabili per la connessione al server!"
-        });
+    // vengono inizializzati i parametri per permettere il funzionamento del server
+    initializeServerNetworkValuesFromArguments(&argc, &argv, &port);
 
     /*
      * ---------Istruzioni per l'avvio del server---------

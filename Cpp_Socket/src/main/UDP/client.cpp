@@ -4,23 +4,24 @@
 
 // viene incluso il file header contenente le dichiarazioni del Client UDP
 #include "../../UDP/Client.h"
+// viene incluso il file cpp contenente le funzioni per elaborare gli argomenti passati al programma in fase d'avvio
+#include "../../utils/Arguments.cpp"
 
+/**
+ * Blocco principale per l'esecuzione del programma lato Client UDP.
+ * @param argc Numero di argomenti passati all'avvio dell'applicazione
+ * @param argv Stringhe di argomenti passati all'avvio dell'applicazione
+ */
+int main(int argc, char *argv[]) {
+    char *ip = nullptr, *stringToSend = nullptr;
+    int port = -1;
 
-// viene definito il blocco principale del programma lato Client TCP
-int main() {
+    // vengono inizializzati i parametri per permettere la connessione al server
+    initializeClientNetworkValuesFromArguments(&argc, &argv, &ip, &port, &stringToSend);
 
-    // viene dichiarato e definito l'indirizzo IP del server al quale ci si vuole connettere
-    char *ip = new char[]{
-            "192.168.178.134"
-    };
-    // viene impostata la porta alla quale connettersi
-    int port = 5500;
-
-    // viene dichiarato e definito il messaggio da inviare al server
-    char *stringToSend = new char[]{
-            "Ciao mondo!"
-    };
-
+    /*
+     * ---------Istruzioni per la comunicazione con il server---------
+     */
     // viene creato l'oggetto client
     Socket::UDP::Client client;
 
