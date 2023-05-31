@@ -15,6 +15,7 @@
 // vengono incluse le librerie utili per il funzionamento del socket
 #include <Winsock2.h>
 #include <iostream>
+
 // viene aggiunta la libreria "ws2_32.lib" alla lista delle librerie utili per il funzionamento del socket
 #pragma comment(lib, "ws2_32.lib")
 
