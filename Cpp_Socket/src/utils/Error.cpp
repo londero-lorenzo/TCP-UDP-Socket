@@ -12,6 +12,10 @@ static void printError(char *description) {
     std::cerr << description << std::endl;
 }
 
+/**
+ * Funzione utilizzata per stampare a schermo un errore che impone un interruzione del programma.
+ * @param description Descrizione dell'errore
+ */
 static void printErrorWithExit(char *description)
 {
     std::cerr << description << std::endl;
